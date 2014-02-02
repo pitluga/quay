@@ -1,0 +1,2 @@
+dep "redis", image: "dockerfile/redis"
+dep "memcache", image: "jacksoncage/memcache"

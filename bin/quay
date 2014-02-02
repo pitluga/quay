@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+
+require 'quay'
+
+Quay::CLI.start(ARGV)
