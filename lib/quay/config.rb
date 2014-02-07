@@ -10,11 +10,19 @@ module Quay
       config
     end
 
-    attr_reader :deps
+    attr_reader :deps, :tasks
+
+    def initialize
+      @deps = {}
+      @tasks = {}
+    end
 
     def dep(name, options={})
-      @deps ||= {}
       @deps[name] = options
+    end
+
+    def task(name, options={})
+      @tasks[name] = options
     end
   end
 end

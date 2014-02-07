@@ -1,2 +1,4 @@
 dep "redis", image: "dockerfile/redis"
 dep "memcache", image: "jacksoncage/memcache"
+
+task "sayhi", image: "ubuntu", cmd: ["/bin/echo", "hello world"]
