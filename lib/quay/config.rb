@@ -1,6 +1,7 @@
 module Quay
   class Config
     def self.eval_from_path(path)
+      path ||= "Quayfile"
       evaluate(File.read(path))
     end
 

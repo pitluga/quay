@@ -1,6 +1,17 @@
 require 'spec_helper'
 
 describe Quay::CLI, type: :cli do
+  describe "default config" do
+    it "looks in the working directory" do
+      Dir.chdir(File.dirname(EXAMPLE_FILE)) do
+        output = `ruby -I ../lib ../bin/quay services`
+        output.should match(/DEPENDENCY CONTAINER_ID/)
+        output.should match(/^memcache *$/)
+        output.should match(/^redis *$/)
+      end
+    end
+  end
+
   describe "version" do
     it "prints the version and exits" do
       quay("version").should match(/Quay Version [\d\.]+/)
