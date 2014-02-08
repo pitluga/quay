@@ -39,7 +39,6 @@ module Quay
       opts = {
         'Image' => task[:image],
         'Cmd' => task[:cmd],
-        'Entrypoint' => task[:entrypoint],
         'Env' => env,
       }
       container = Docker::Container.create(opts)
@@ -57,7 +56,40 @@ module Quay
       end
     end
 
-    desc "deps [list,start,stop]", "Manage dependencies"
-    subcommand "deps", Commands::Deps
+    desc "services", "lists available services"
+    def services
+      config = Quay::Config.eval_from_path(options[:config])
+      state = Quay::State.new
+      lines = config.deps.keys.sort.map do |dep|
+        id = state.containers[dep]
+        if id
+          container = Docker::Container.get(id)
+          [dep, container.id[0...12]]
+        else
+          [dep, nil]
+        end
+      end
+      puts "DEPENDENCY CONTAINER_ID"
+      puts lines.map{|col| col.join(" ") }.join("\n")
+    end
+
+    desc "start SERVICE", "start a SERVICE"
+    def start(name)
+      config = Quay::Config.eval_from_path(options[:config])
+      container = Dependency.start(name, config.deps[name])
+      puts "Started #{name} #{container.id[0...12]}"
+    end
+
+    desc "stop SERVICE", "stop a SERVICE"
+    def stop(name)
+      config = Quay::Config.eval_from_path(options[:config])
+      dependency = config.deps[name]
+      container = Dependency.stop(name, dependency)
+      if container.nil?
+        puts "Skipping #{name}"
+      else
+        puts "Stopped #{name} #{container.id[0...12]}"
+      end
+    end
   end
 end
