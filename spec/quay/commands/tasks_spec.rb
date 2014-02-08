@@ -13,5 +13,10 @@ describe 'quay tasks', type: :cli do
       output = quay("run sayhi --config #{EXAMPLE_FILE}")
       output.should match(/hello world/)
     end
+
+    it "can run a task with a dependency" do
+      output = quay("run redis_info --config #{EXAMPLE_FILE}")
+      output.should match(/used_memory/)
+    end
   end
 end

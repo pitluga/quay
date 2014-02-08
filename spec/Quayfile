@@ -1,4 +1,14 @@
-dep "redis", image: "dockerfile/redis"
-dep "memcache", image: "jacksoncage/memcache"
+# vim: ft=ruby:
+dep 'redis', image: 'orchardup/redis'
+dep 'memcache', image: 'jacksoncage/memcache'
 
-task "sayhi", image: "ubuntu", cmd: ["/bin/echo", "hello world"]
+task 'sayhi', image: 'ubuntu', cmd: ['/bin/echo', 'hello world']
+
+task 'redis_info',
+  depends: %w(redis),
+  image: 'orchardup/redis',
+  env: {
+    'REDIS_HOST' => '$redis:NetworkSettings/IPAddress',
+    'REDIS_PORT' => '6379'
+  },
+  cmd: ['/bin/bash', '-c', '/usr/bin/redis-cli -h $REDIS_HOST -p $REDIS_PORT info']

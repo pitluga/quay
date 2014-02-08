@@ -27,14 +27,7 @@ module Quay
             start(dep_name)
           end
         else
-          dependency = config.deps[name]
-
-          container = Docker::Container.create('Image' => dependency[:image])
-          container.start
-
-          state = Quay::State.new
-          state.save_container(name, container.id)
-
+          container = Dependency.start(name, config.deps[name])
           puts "Started #{name} #{container.id[0...12]}"
         end
       end
@@ -49,23 +42,14 @@ module Quay
           end
         else
           dependency = config.deps[name]
-          state = Quay::State.new
-          id = state.containers[name]
-
-          if id.nil?
+          container = Dependency.stop(name, dependency)
+          if container.nil?
             puts "Skipping #{name}"
           else
-            container = Docker::Container.get(id)
-            container.stop
-
-            state.remove_container(name)
-
-            puts "Stopped #{name} #{id[0...12]}"
+            puts "Stopped #{name} #{container.id[0...12]}"
           end
         end
       end
-
-      # default_task :list
     end
   end
 end
