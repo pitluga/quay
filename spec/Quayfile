@@ -5,7 +5,7 @@ service 'memcache', image: 'jacksoncage/memcache'
 task 'sayhi', image: 'ubuntu', cmd: ['/bin/echo', 'hello world']
 
 task 'redis_info',
-  depends: %w(redis),
+  depends: 'redis',
   image: 'orchardup/redis',
   env: {
     'REDIS_HOST' => '$redis:NetworkSettings/IPAddress',

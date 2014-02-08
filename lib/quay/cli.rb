@@ -25,7 +25,7 @@ module Quay
       task = config.tasks[name]
       raise Thor::Error.new("unknown task #{name.inspect}") if task.nil?
 
-      task.fetch(:depends, []).each do |dependency|
+      Array(task[:depends]).each do |dependency|
         puts "starting #{dependency}"
         Container.start(dependency, config.services[dependency])
       end
@@ -36,7 +36,8 @@ module Quay
       container.attach do |stream, chunk|
         puts "#{stream}: #{chunk}"
       end
-      task.fetch(:depends, []).each do |dependency|
+
+      Array(task[:depends]).each do |dependency|
         puts "stopping #{dependency}"
         Container.stop(dependency, config.services[dependency])
       end
