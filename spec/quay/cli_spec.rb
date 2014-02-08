@@ -33,6 +33,11 @@ describe Quay::CLI, type: :cli do
       it "starts the given dependency" do
         quay("start redis --config #{EXAMPLE_FILE}").should match(/Started redis/)
       end
+
+      it "returns an error if the name is unknown" do
+        quay("start unknown --config #{EXAMPLE_FILE}").should match(/unknown service "unknown"/)
+        $?.exitstatus.should == 1
+      end
     end
 
     describe "stop" do
@@ -43,6 +48,11 @@ describe Quay::CLI, type: :cli do
 
       it "skips dependencies that are not running" do
         quay("stop redis --config #{EXAMPLE_FILE}").should match(/Skipping redis/)
+      end
+
+      it "returns an error if the name is unknown" do
+        quay("stop unknown --config #{EXAMPLE_FILE}").should match(/unknown service "unknown"/)
+        $?.exitstatus.should == 1
       end
     end
 
@@ -81,6 +91,11 @@ describe Quay::CLI, type: :cli do
     it "can run a task with a dependency" do
       output = quay("run redis_info --config #{EXAMPLE_FILE}")
       output.should match(/used_memory/)
+    end
+
+    it "returns an error if the name is unknown" do
+      quay("run unknown --config #{EXAMPLE_FILE}").should match(/unknown task "unknown"/)
+      $?.exitstatus.should == 1
     end
   end
 end

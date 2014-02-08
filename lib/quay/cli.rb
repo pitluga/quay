@@ -2,6 +2,10 @@ module Quay
   class CLI < Thor
     class_option :config, type: :string
 
+    def self.exit_on_failure?
+      true
+    end
+
     desc "version", "Prints version and exits"
     def version
       puts "Quay Version #{VERSION}"
@@ -19,6 +23,7 @@ module Quay
     def run_task(name)
       config = Quay::Config.eval_from_path(options[:config])
       task = config.tasks[name]
+      raise Thor::Error.new("unknown task #{name.inspect}") if task.nil?
 
       task.fetch(:depends, []).each do |dependency|
         puts "starting #{dependency}"
@@ -57,15 +62,22 @@ module Quay
     desc "start SERVICE", "start a SERVICE"
     def start(name)
       config = Quay::Config.eval_from_path(options[:config])
-      container = Container.start(name, config.services[name])
+      service = config.services[name]
+
+      raise Thor::Error.new("unknown service #{name.inspect}") if service.nil?
+
+      container = Container.start(name, service)
       puts "Started #{name} #{container.id[0...12]}"
     end
 
     desc "stop SERVICE", "stop a SERVICE"
     def stop(name)
       config = Quay::Config.eval_from_path(options[:config])
-      dependency = config.services[name]
-      container = Container.stop(name, dependency)
+      service = config.services[name]
+
+      raise Thor::Error.new("unknown service #{name.inspect}") if service.nil?
+
+      container = Container.stop(name, service)
       if container.nil?
         puts "Skipping #{name}"
       else
