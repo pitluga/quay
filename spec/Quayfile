@@ -1,6 +1,6 @@
 # vim: ft=ruby:
-dep 'redis', image: 'orchardup/redis'
-dep 'memcache', image: 'jacksoncage/memcache'
+service 'redis', image: 'orchardup/redis'
+service 'memcache', image: 'jacksoncage/memcache'
 
 task 'sayhi', image: 'ubuntu', cmd: ['/bin/echo', 'hello world']
 

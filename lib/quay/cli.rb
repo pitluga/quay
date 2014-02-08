@@ -20,9 +20,9 @@ module Quay
       config = Quay::Config.eval_from_path(options[:config])
       task = config.tasks[name]
 
-      task.fetch(:depends, []).each do |dep|
-        puts "starting #{dep}"
-        Container.start(dep, config.deps[dep])
+      task.fetch(:depends, []).each do |dependency|
+        puts "starting #{dependency}"
+        Container.start(dependency, config.services[dependency])
       end
 
       container = Container.start(name, task)
@@ -31,9 +31,9 @@ module Quay
       container.attach do |stream, chunk|
         puts "#{stream}: #{chunk}"
       end
-      task.fetch(:depends, []).each do |dep|
-        puts "stopping #{dep}"
-        Container.stop(dep, config.deps[dep])
+      task.fetch(:depends, []).each do |dependency|
+        puts "stopping #{dependency}"
+        Container.stop(dependency, config.services[dependency])
       end
     end
 
@@ -41,13 +41,13 @@ module Quay
     def services
       config = Quay::Config.eval_from_path(options[:config])
       state = Quay::State.new
-      lines = config.deps.keys.sort.map do |dep|
-        id = state.containers[dep]
+      lines = config.services.keys.sort.map do |service|
+        id = state.containers[service]
         if id
           container = Docker::Container.get(id)
-          [dep, container.id[0...12]]
+          [service, container.id[0...12]]
         else
-          [dep, nil]
+          [service, nil]
         end
       end
       puts "DEPENDENCY CONTAINER_ID"
@@ -57,14 +57,14 @@ module Quay
     desc "start SERVICE", "start a SERVICE"
     def start(name)
       config = Quay::Config.eval_from_path(options[:config])
-      container = Container.start(name, config.deps[name])
+      container = Container.start(name, config.services[name])
       puts "Started #{name} #{container.id[0...12]}"
     end
 
     desc "stop SERVICE", "stop a SERVICE"
     def stop(name)
       config = Quay::Config.eval_from_path(options[:config])
-      dependency = config.deps[name]
+      dependency = config.services[name]
       container = Container.stop(name, dependency)
       if container.nil?
         puts "Skipping #{name}"

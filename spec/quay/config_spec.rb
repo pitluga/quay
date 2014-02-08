@@ -2,19 +2,19 @@ require 'spec_helper'
 
 describe Quay::Config do
   describe ".evaluate" do
-    context "dep" do
+    context "service" do
       it "is an empty hash by default" do
         config = Quay::Config.evaluate("")
-        config.deps.should == {}
+        config.services.should == {}
       end
 
       it "adds a dependency" do
         config = Quay::Config.evaluate <<-EOS
-          dep "foo", image: "bar"
+          service "foo", image: "bar"
         EOS
 
-        config.deps.has_key?("foo").should be_true
-        config.deps["foo"].should == { image: "bar" }
+        config.services.has_key?("foo").should be_true
+        config.services["foo"].should == { image: "bar" }
       end
     end
 
