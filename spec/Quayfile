@@ -12,3 +12,13 @@ task 'redis_info',
     'REDIS_PORT' => '6379'
   },
   cmd: ['/bin/bash', '-c', '/usr/bin/redis-cli -h $REDIS_HOST -p $REDIS_PORT info']
+
+project_root = File.expand_path(File.dirname(__FILE__))
+
+task 'ls_volume',
+  image: 'ubuntu',
+  volumes: [
+    [project_root, '/mnt', 'ro']
+  ],
+  working_dir: '/mnt',
+  cmd: ['/bin/ls']

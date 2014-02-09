@@ -13,13 +13,23 @@ module Quay
         end
       end
 
+      volumes = container_config.fetch(:volumes, []).map do |host, container, mode|
+        [container, {}]
+      end
+
+      binds = container_config.fetch(:volumes, []).map do |*args|
+        args.join(":")
+      end
+
       opts = {
         'Image' => container_config[:image],
         'Cmd' => container_config[:cmd],
+        'WorkingDir' => container_config[:working_dir],
+        'Volumes' => Hash[volumes],
         'Env' => env,
       }
       container = Docker::Container.create(opts)
-      container.start
+      container.start('Binds' => binds)
 
       state.save_container(name, container.id)
 

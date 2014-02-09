@@ -97,5 +97,9 @@ describe Quay::CLI, type: :cli do
       quay("run unknown --config #{EXAMPLE_FILE}").should match(/unknown task "unknown"/)
       $?.exitstatus.should == 1
     end
+
+    it "can mount a volume" do
+      quay("run ls_volume --config #{EXAMPLE_FILE}").should match(/quay.gemspec/)
+    end
   end
 end
