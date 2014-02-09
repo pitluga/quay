@@ -1,6 +1,9 @@
 module Quay
   class CLI < Thor
+    include Thor::Actions
+
     class_option :config, type: :string
+    source_root File.expand_path("../templates", __FILE__)
 
     def self.exit_on_failure?
       true
@@ -9,6 +12,12 @@ module Quay
     desc "version", "Prints version and exits"
     def version
       puts "Quay Version #{VERSION}"
+    end
+
+    desc "init [dir]", "create a new Quayfile"
+    def init(dir=nil)
+      target = dir ? File.join(dir, 'Quayfile') : 'Quayfile'
+      copy_file('Quayfile', target)
     end
 
     desc "tasks", "list available tasks"

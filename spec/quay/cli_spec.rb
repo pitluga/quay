@@ -4,7 +4,7 @@ describe Quay::CLI, type: :cli do
   describe "default config" do
     it "looks in the working directory" do
       Dir.chdir(File.dirname(EXAMPLE_FILE)) do
-        output = `ruby -I ../lib ../bin/quay services`
+        output = quay('services')
         output.should match(/DEPENDENCY CONTAINER_ID/)
         output.should match(/^memcache *$/)
         output.should match(/^redis *$/)
@@ -15,6 +15,26 @@ describe Quay::CLI, type: :cli do
   describe "version" do
     it "prints the version and exits" do
       quay("version").should match(/Quay Version [\d\.]+/)
+    end
+  end
+
+  describe "init" do
+    it "generates a Quayfile in the current dir" do
+      Dir.mktmpdir do |dir|
+        Dir.chdir(dir) do
+          File.exist?("Quayfile").should == false
+          quay("init")
+          File.exist?("Quayfile").should == true
+        end
+      end
+    end
+
+    it "generates a Quayfile in the given dir" do
+      Dir.mktmpdir do |dir|
+        File.exist?(File.join(dir, "Quayfile")).should == false
+        quay("init #{dir}")
+        File.exist?(File.join(dir, "Quayfile")).should == true
+      end
     end
   end
 
