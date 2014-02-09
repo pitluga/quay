@@ -121,5 +121,11 @@ describe Quay::CLI, type: :cli do
     it "can mount a volume" do
       quay("run ls_volume --config #{EXAMPLE_FILE}").should match(/quay.gemspec/)
     end
+
+    it "will pull an image that doesn't exist" do
+      images = Docker::Image.search('ubuntu')
+      images.each(&:remove)
+      quay("run sayhi --config #{EXAMPLE_FILE}").should match(/hello world/)
+    end
   end
 end

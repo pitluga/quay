@@ -1,5 +1,11 @@
 module Quay
   class Container
+    def self.ensure_image(image)
+      Docker::Image.get(image)
+    rescue Docker::Error::NotFoundError
+      Docker::Image.create('fromImage' => image)
+    end
+
     def self.start(name, container_config)
       state = Quay::State.new
       env_lookup = Quay::EnvLookup.new(state)
@@ -28,6 +34,7 @@ module Quay
         'Volumes' => Hash[volumes],
         'Env' => env,
       }
+      ensure_image(container_config[:image])
       container = Docker::Container.create(opts)
       container.start('Binds' => binds)
 
