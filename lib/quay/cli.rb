@@ -45,11 +45,14 @@ module Quay
       container.attach do |stream, chunk|
         puts "#{stream}: #{chunk}"
       end
+      exit_code = container.wait(10000)["StatusCode"]
 
       Array(task[:depends]).each do |dependency|
         puts "stopping #{dependency}"
         Container.stop(dependency, config.services[dependency])
       end
+
+      exit exit_code
     end
 
     desc "services", "lists available services"

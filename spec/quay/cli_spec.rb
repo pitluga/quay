@@ -127,5 +127,10 @@ describe Quay::CLI, type: :cli do
       images.each(&:remove)
       quay("run sayhi --config #{EXAMPLE_FILE}").should match(/hello world/)
     end
+
+    it "will exit with the exit code of the task" do
+      quay("run failure --config #{EXAMPLE_FILE}")
+      $?.exitstatus.should == 1
+    end
   end
 end

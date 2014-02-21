@@ -22,3 +22,12 @@ task 'ls_volume',
   ],
   working_dir: '/mnt',
   cmd: ['/bin/ls']
+
+task 'failure',
+  depends: 'redis',
+  image: 'ubuntu',
+  cmd: ['/bin/bash', '-c', 'exit 1']
+
+task 'big_output',
+  image: 'ubuntu',
+  cmd: ['/bin/cat', '/var/log/dpkg.log']
