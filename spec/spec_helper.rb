@@ -1,6 +1,7 @@
 $LOAD_PATH.unshift File.expand_path("../../lib", __FILE__)
 require 'quay'
 require 'support/cli_driver'
+require 'support/with_env'
 
 RSpec.configure do |config|
   config.treat_symbols_as_metadata_keys_with_true_values = true
@@ -9,6 +10,7 @@ RSpec.configure do |config|
   config.order = 'random'
 
   config.include CLIDriver, type: :cli
+  config.include WithEnv
 end
 
 EXAMPLE_FILE = File.expand_path('../Quayfile', __FILE__)

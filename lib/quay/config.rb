@@ -1,8 +1,11 @@
 module Quay
   class Config
-    def self.eval_from_path(path)
-      path ||= "Quayfile"
-      evaluate(File.read(path))
+    def self.eval_from_path(custom_path)
+      evaluate(File.read(determine_path(custom_path)))
+    end
+
+    def self.determine_path(custom_path)
+      custom_path || ENV["QUAYFILE"] || "Quayfile"
     end
 
     def self.evaluate(contents)
